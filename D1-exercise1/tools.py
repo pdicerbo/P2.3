@@ -24,3 +24,18 @@ def write_x_y_key(filename,x,y,key):
     f.close()
     
     return
+
+def bit_shift(v, x):
+    v = v << x
+    return v
+
+def extract_bits(v, start, num):
+    tmp = int(bin(v)[start:start+num],2)
+    return tmp
+
+def logical_mask(v, c):
+    return v & c
+
+def bit_left(v, x):
+    v = v >> x
+    return v
