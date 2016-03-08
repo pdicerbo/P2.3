@@ -12,7 +12,7 @@ def make_hilbert_grid(xgrid, ygrid, vr):
 
         return
     else:
-        print("vr.levgrid = ", vr.levgrid)
+        # print("vr.levgrid = ", vr.levgrid)
         vr.levgrid += 1
         
         n = len(xgrid)
@@ -112,7 +112,39 @@ def make_hilbert_key(vr):
         vr.key_list = np.copy(np.append(vr.key_list, num))
         print(i, vr.x_pos[i], vr.y_pos[i], num)
 
+def test2D(vr):
 
+    for j in range(0, len(vr.x_pos)):
+
+        sidelocal = 2**vr.levscan
+        k = (int) (sidelocal * 0.5)
+
+        ix  = (int)(vr.x_pos[j] * sidelocal / vr.side)
+        iy  = (int)(vr.y_pos[j] * sidelocal / vr.side)
+
+        num = (int)(0)
+        levs = vr.levscan - 1
+
+        while k > 0:
+            rx = (int)(bit_test(ix, levs))
+            ry = (int)(bit_test(iy, levs))
+            quad = (3 * rx)^ry
+            num += k * k * quad
+
+            if ry == 0:
+                if rx == 1:
+                    ix = sidelocal - 1 - ix
+                    iy = sidelocal - 1 - iy
+                    
+                swap = ix
+                ix = iy
+                iy = swap
+
+            k = (int) (k * 0.5)
+            levs -= 1
+
+        vr.key_list = np.copy(np.append(vr.key_list, num))
+        print(j, vr.x_pos[j], vr.y_pos[j], num)
 
 def make_morton_grid(xgrid, ygrid, vr):
 
@@ -209,8 +241,8 @@ def main():
     print("starting grid calculation")
 
     make_hilbert_grid(xgrid, ygrid, vr)
-    make_hilbert_key(vr)
-    
+    # make_hilbert_key(vr)
+    test2D(vr)
     # print(vr.key_list)
 
     print("plotting")
