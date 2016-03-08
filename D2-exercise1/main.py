@@ -53,6 +53,66 @@ def make_hilbert_grid(xgrid, ygrid, vr):
 
         return
 
+def make_hilbert_key(vr):
+
+    vr.quad_table[0,0,0] = 0
+    vr.quad_table[0,1,0] = 3
+
+    vr.quad_table[0,0,1] = 1
+    vr.quad_table[0,1,1] = 2
+
+    vr.quad_table[1,0,0] = 1
+    vr.quad_table[1,1,0] = 0
+
+    vr.quad_table[1,0,1] = 2
+    vr.quad_table[1,1,1] = 3
+    
+    vr.quad_table[2,0,0] = 2
+    vr.quad_table[2,1,0] = 1
+
+    vr.quad_table[2,0,1] = 3
+    vr.quad_table[2,1,1] = 0
+
+    vr.quad_table[3,0,0] = 3
+    vr.quad_table[3,1,0] = 2
+
+    vr.quad_table[3,0,1] = 0
+    vr.quad_table[3,1,1] = 1
+
+    for i in range(0, len(vr.x_pos)):
+
+        x = vr.x_pos[i]
+        y = vr.y_pos[i]
+        
+        rotation = 0
+        sense = 1
+        
+        k = (int)(vr.side * 0.5)
+        num = 0
+
+        while k > 0:
+            xbit = (int)(x / k)
+            ybit = (int)(y / k)
+            x -= xbit * k
+            y -= ybit * k
+            quadh = vr.quad_table[rotation, xbit, ybit]
+
+            if sense == -1:
+                num += k*k*(3-quadh)
+            else:
+                num += k*k*quadh
+
+            rotation += vr.rotation_table[quadh]
+            if rotation >= 4:
+                rotation -= 4
+
+            sense *= vr.sense_table[quadh]
+            k = (int)(k * 0.5)
+
+        vr.key_list = np.copy(np.append(vr.key_list, num))
+        print(i, vr.x_pos[i], vr.y_pos[i], num)
+
+
 
 def make_morton_grid(xgrid, ygrid, vr):
 
@@ -113,7 +173,7 @@ def main():
     print("main section of the program")
 
     # WARNING: levscan cannot be greater than 6
-    vr.levscan = 6
+    vr.levscan = 4
     vr.side = 16
     
     vr.quad_pos[0,0] = 0.5
@@ -148,7 +208,9 @@ def main():
     print("starting grid calculation")
 
     make_hilbert_grid(xgrid, ygrid, vr)
-    # make_morton_key(vr)
+    make_hilbert_key(vr)
+    
+    # print(vr.key_list)
 
     print("plotting")
     

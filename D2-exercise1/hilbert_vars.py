@@ -8,7 +8,7 @@ import numpy as np
 
 class Vars:
     def __init__(self):
-        self.n_points = int(4096)
+        self.n_points = int(4**4) #int(4096)
         self.rotation_table = np.array([3, 0, 0, 1], dtype=np.int32)
         self.sense_table = np.array([-1, 1, 1, -1], dtype=np.int32)
         self.quad_table = np.zeros((4,2,2), dtype=np.int32)#(0:3,0:1,0:1)  
