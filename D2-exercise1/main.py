@@ -205,7 +205,7 @@ def main():
     print("main section of the program")
 
     # WARNING: levscan cannot be greater than 6
-    vr = Vars(4)
+    vr = Vars(6)
     # vr.levscan = 4
     vr.side = 16
     
