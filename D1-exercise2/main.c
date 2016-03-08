@@ -201,7 +201,7 @@ int main(){
   make_key(&curve);
 
   printf("\n\n\tsaving output\n");
-  out = fopen("data.dat", "w");
+  out = fopen("curve.dat", "w");
 
   for(i = 0; i < curve.npoints; i++)
     fprintf(out, "%lg\t%lg\t%d\n", curve.x_pos[i], curve.y_pos[i], curve.key_list[i]);
