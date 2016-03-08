@@ -206,7 +206,7 @@ int main(){
   for(i = 0; i < curve.npoints; i++)
     fprintf(out, "%lg\t%lg\t%d\n", curve.x_pos[i], curve.y_pos[i], curve.key_list[i]);
 
-  
+  fclose(out);
   morton_dealloc(&curve);
   free(xgrid);
   free(ygrid);
