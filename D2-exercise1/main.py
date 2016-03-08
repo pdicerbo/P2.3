@@ -173,7 +173,8 @@ def main():
     print("main section of the program")
 
     # WARNING: levscan cannot be greater than 6
-    vr.levscan = 4
+    vr = Vars(4)
+    # vr.levscan = 4
     vr.side = 16
     
     vr.quad_pos[0,0] = 0.5
@@ -222,7 +223,6 @@ def main():
     
 
 if __name__ == "__main__":
-    vr = Vars()
     print("kick")
     main()
     print("done")
