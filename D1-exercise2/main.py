@@ -6,22 +6,20 @@ from tools import *
 def make_grid(xgrid, ygrid, vr):
 
     if vr.levgrid + 1 >= vr.levscan:
+
         vr.x_pos = np.copy(xgrid)
         vr.y_pos = np.copy(ygrid)
-        # print("len vr.x_pos = ", len(vr.x_pos))
+
         return
     else:
         vr.levgrid += 1
         n = len(xgrid)
-        print("calculation for n = ", n)
+
         xsub = np.zeros(4 * n)
         ysub = np.zeros(4 * n)
 
         xswap = xgrid / 2
         yswap = ygrid / 2
-
-        print(xgrid)
-        print(ygrid)
 
         for i in range(0, 4):
             iad = i * n
@@ -62,7 +60,6 @@ def make_key(vr):
 
 def main():
     print("main section of the program")
-    # print(vr.quad)
 
     vr.quad[0,0] = 0.5
     vr.quad[1,0] = 0.5
@@ -98,6 +95,8 @@ def main():
     make_grid(xgrid, ygrid, vr)
     make_key(vr)
 
+    print("plotting")
+    
     plt.figure()
     plt.plot(vr.x_pos, vr.y_pos)
     plt.show()
@@ -107,6 +106,6 @@ def main():
 
 if __name__ == "__main__":
     vr = Vars()
-    print("Kick")
+    print("kick")
     main()
-    print("Done")
+    print("done")
