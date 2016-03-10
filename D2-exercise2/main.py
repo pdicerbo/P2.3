@@ -5,7 +5,6 @@ from tools import *
 
 def tree_sort(g, nblist, listbodies, oldcell):
 
-    # HOC = np.zeros(4)
     HOC = -1 * np.ones(4)
     LLJ = np.zeros(nblist)
     sublist = np.zeros(nblist)
@@ -19,7 +18,7 @@ def tree_sort(g, nblist, listbodies, oldcell):
     for j in range(0, nblist):
         i = listbodies[j]
         key_of_point = (int)(g.key_list[i])
-        lpos = 2 * ( g.itercell_tree - 1) # g.ndim * levscan
+        lpos = 2 * ( g.itercell_tree - 1)
 
         # MyExtractBits
         ju = int(format(key_of_point, 'b').zfill(20)[lpos:lpos+2],2)
@@ -35,13 +34,11 @@ def tree_sort(g, nblist, listbodies, oldcell):
     for jsub in range(0, g.nsubcell):
         k = HOC[jsub]
 
-        # if k == 0:
         if k == -1:
             continue
 
         nsubc = 0
 
-        # while k > 0:
         while k >= 0:
             i = listbodies[k]
             sublist[nsubc] = i
@@ -109,7 +106,6 @@ def main():
     nbodcell = nbodsmax + g.ncells
     ndim = 2
     g.nsubcell = 2**ndim
-    # key_list = np.empty((0,))
     rmin = np.zeros(ndim)
     
     load_data = np.loadtxt("tree.dat")
@@ -230,27 +226,12 @@ def main():
         plt.plot(squarex, squarey, color = "black")
                 
     plt.plot(plotx, ploty, '-*')
-
+    plt.title("OctTree")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.savefig("final_tree.png")
     plt.show()
     
-def test_init():
-    v = LinkedList(5.1)
-    a = LinkedList(3.2)
-    b = LinkedList(2.3)
-    
-    print("v = ", v)
-    print("v.next = ", v.next)
-    print("FIRST ADD")
-    v.add(a)
-    print("v = ", v)
-    print("v.next = ", v.next)
-    print("v.next.next = ", v.next.next)
-    print("SECOND ADD")
-    v.add(b)
-    print("v = ", v)
-    print("v.next = ", v.next)
-    print("v.next.next = ", v.next.next)
-
 if __name__ == "__main__":
     g = GlobVars(0);
     main()
