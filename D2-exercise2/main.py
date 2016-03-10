@@ -196,7 +196,43 @@ def main():
     tree_sort(g, nbodies, bodlist, g.root)
     print_cells(g)
     sorti(g)
-        
+
+    plt.figure()
+    print("\n\tPLOT\n")
+
+    # POINTS
+    plotx = np.empty((0,))
+    ploty = np.empty((0,))
+    squarex = np.zeros(5)
+    squarey = np.zeros(5)
+    
+    for j in g.subindex:
+        plotx = np.append(plotx, g.pos[0,j])
+        ploty = np.append(ploty, g.pos[1,j])
+
+
+    for j in range(g.incells):
+
+        ind = j + g.root
+
+        squarex[0] = g.bottom[0,ind]
+        squarex[1] = g.bottom[0,ind] + g.cellsize[ind]
+        squarex[2] = g.bottom[0,ind] + g.cellsize[ind]
+        squarex[3] = g.bottom[0,ind]
+        squarex[4] = g.bottom[0,ind]
+
+        squarey[0] = g.bottom[1,ind]
+        squarey[1] = g.bottom[1,ind]
+        squarey[2] = g.bottom[1,ind] + g.cellsize[ind]
+        squarey[3] = g.bottom[1,ind] + g.cellsize[ind]
+        squarey[4] = g.bottom[1,ind]
+
+        plt.plot(squarex, squarey, color = "black")
+                
+    plt.plot(plotx, ploty, '-*')
+
+    plt.show()
+    
 def test_init():
     v = LinkedList(5.1)
     a = LinkedList(3.2)
