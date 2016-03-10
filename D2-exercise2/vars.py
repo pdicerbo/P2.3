@@ -53,7 +53,7 @@ class GlobVars:
         self.bottom = np.empty((0,))
         self.cellsize = np.empty((0,))
         self.pointers_of_tree = np.empty((0,))
-
+        self.subindex = np.empty((0,))
         
 class LinkedList:
     def __init__(self, head = None, next = None):

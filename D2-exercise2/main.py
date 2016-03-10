@@ -24,13 +24,13 @@ def tree_sort(g, nblist, listbodies, oldcell):
         # MyExtractBits
         ju = int(format(key_of_point, 'b').zfill(20)[lpos:lpos+2],2)
 
-        print("key_of_point = ", key_of_point, " lpos = ", lpos, " ju = ", ju, "i = ", i)
+        # print("key_of_point = ", key_of_point, " lpos = ", lpos, " ju = ", ju, "i = ", i)
 
         kprev = HOC[ju]
         LLJ[j] = kprev
         HOC[ju] = j
 
-    print("\n\n=====================================================\n\n")
+    # print("\n\n=====================================================\n\n")
     
     for jsub in range(0, g.nsubcell):
         k = HOC[jsub]
@@ -75,8 +75,33 @@ def tree_sort(g, nblist, listbodies, oldcell):
             g.iback[1, pbody] = oldcell
 
     g.itercell_tree -= 1
-        
-            
+
+def print_cells(g):
+    out = open("treecells.dat", "w")
+    print("\n\tcells:\n")
+    for j in range(g.incells):
+        ind = j + g.root
+        tosave = "%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\t%.1f\n" % (g.bottom[0,ind], g.bottom[1,ind],
+                  g.bottom[0,ind] + g.cellsize[ind], g.bottom[0,ind],
+                  g.bottom[0,ind] + g.cellsize[ind], g.bottom[1,ind] + g.cellsize[ind],
+                  g.bottom[0,ind], g.bottom[1,ind] + g.cellsize[ind])
+        print(tosave[:-2])
+        out.write(tosave)
+    print("")
+    out.close()
+
+def sorti(g):
+    tmp = np.sort(g.key_list)
+    j = 0
+    i = 0
+    for el in tmp:
+        while el != g.key_list[j]:
+            j += 1
+        g.subindex[i] = j
+        i += 1
+        j = 0
+
+    print("g.subindex = ", g.subindex)
                 
 def main():
     nbodsmax = 1000
@@ -97,7 +122,7 @@ def main():
 
     g.pos = np.zeros((2, nbodsmax + g.ncells))
     g.bottom = np.zeros((2, nbodcell))
-    subindex = np.zeros(nbodies)
+    g.subindex = np.zeros(nbodies)
     bodlist = np.zeros(nbodies)
     g.cellsize = np.zeros(nbodcell)
     g.iback = np.zeros((2,nbodcell))
@@ -157,9 +182,10 @@ def main():
     print("key_list = ", g.key_list)
 
     # initialization of some other variables
-    incells = 1
+    g.incells = 1
     g.root = nbodies
-
+    g.cellsize[g.root] = rsize
+    
     # initialization to 0, meaning there are no cells within the tree
     g.pointers_of_tree = np.zeros((g.nsubcell, g.ncells))
 
@@ -168,7 +194,8 @@ def main():
         g.bottom[j, g.root] = rmin[j]
 
     tree_sort(g, nbodies, bodlist, g.root)
-
+    print_cells(g)
+    sorti(g)
         
 def test_init():
     v = LinkedList(5.1)
