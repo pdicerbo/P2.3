@@ -24,7 +24,7 @@ def tree_sort(g, nblist, listbodies, oldcell):
         ju = int(format(key_of_point, 'b').zfill(20)[lpos:lpos+2],2)
 
         # print("key_of_point = ", key_of_point, " lpos = ", lpos, " ju = ", ju, "i = ", i)
-
+        
         kprev = HOC[ju]
         LLJ[j] = kprev
         HOC[ju] = j
