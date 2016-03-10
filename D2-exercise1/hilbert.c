@@ -225,9 +225,9 @@ void hilbert_dealloc(struct Hilbert* h){
   free((*h).sense_table);
   free((*h).quad_table[0][0]);
   free((*h).quad_table[0]);
-  free((*h).quad_table[1]);
-  free((*h).quad_table[2]);
-  free((*h).quad_table[3]);
+  /* free((*h).quad_table[1]); */
+  /* free((*h).quad_table[2]); */
+  /* free((*h).quad_table[3]); */
   free((*h).quad_pos[0]);
   free((*h).corner[0]);
 
