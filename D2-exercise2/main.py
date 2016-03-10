@@ -5,7 +5,8 @@ from tools import *
 
 def tree_sort(g, nblist, listbodies, oldcell):
 
-    HOC = np.zeros(4)
+    # HOC = np.zeros(4)
+    HOC = -1 * np.ones(4)
     LLJ = np.zeros(nblist)
     sublist = np.zeros(nblist)
     g.itercell_tree += 1
@@ -17,48 +18,75 @@ def tree_sort(g, nblist, listbodies, oldcell):
 
     for j in range(0, nblist):
         i = listbodies[j]
-        key_of_point = np.int64(g.key_list[j])
-        lpos = g.ndim * levscan
-
-        #ju = int(bin(key_of_point)[4:2:-1],2) #extract_bits(key_of_point, lpos, 2) # subcell index!
+        key_of_point = (int)(g.key_list[i])
+        lpos = 2 * ( g.itercell_tree - 1) # g.ndim * levscan
 
         # MyExtractBits
-        ju = int(bin(key_of_point)[2*g.levorder-lpos+2:2*g.levorder-lpos:-1],2)
-        print("key_of_point = ", key_of_point, " lpos = ", lpos, " ju = ", ju)
+        ju = int(format(key_of_point, 'b').zfill(20)[lpos:lpos+2],2)
+
+        print("key_of_point = ", key_of_point, " lpos = ", lpos, " ju = ", ju, "i = ", i)
+
         kprev = HOC[ju]
         LLJ[j] = kprev
         HOC[ju] = j
 
-    # to complete...
-    # for j in range(0, nsubcell):
-    #     k = HOC[jsub]
-
-    #     if k == 0:
-    #         continue
-
-    #     nsubc = 0
-
-    #     while k > 0:
-    #         nsubc += 1
-    #         i = listbodies[k]
-    #         sublist[nsubc] = i
-    #         k = LLJ[k]
-        
+    print("\n\n=====================================================\n\n")
     
+    for jsub in range(0, g.nsubcell):
+        k = HOC[jsub]
 
+        # if k == 0:
+        if k == -1:
+            continue
+
+        nsubc = 0
+
+        # while k > 0:
+        while k >= 0:
+            i = listbodies[k]
+            sublist[nsubc] = i
+            k = LLJ[k]
+            nsubc += 1
+        
+        if nsubc > 1:
+            g.incells += 1
+            if g.incells > g.ncells:
+                print("error")
+                return
+
+            newcell = g.incells + g.root - 1
+            g.pointers_of_tree[jsub, oldcell] = newcell
+            g.cellsize[newcell] = g.cellsize[oldcell] * 0.5
+
+            for m in range(0, g.ndim):
+                g.pos[m, newcell] = g.pos[m,oldcell] + g.pm1[jsub,m]*0.5*g.cellsize[newcell]
+                g.bottom[m, newcell] = g.pos[m,newcell] - 0.5 * g.cellsize[newcell]
+
+            g.iback[0,newcell] = jsub+1
+            g.iback[1,newcell] = oldcell
+
+            tree_sort(g, nsubc, sublist, newcell)
+            
+        else:
+
+            pbody = sublist[nsubc]
+            g.pointers_of_tree[jsub, oldcell] = pbody
+            g.iback[0, pbody] = jsub + 1
+            g.iback[1, pbody] = oldcell
+
+    g.itercell_tree -= 1
+        
+            
+                
 def main():
     nbodsmax = 1000
-    ncells = 2*nbodsmax
-    nbodcell = nbodsmax + ncells
+    g.ncells = 2*nbodsmax
+    nbodcell = nbodsmax + g.ncells
     ndim = 2
-    nsubcell = 2**ndim
+    g.nsubcell = 2**ndim
     # key_list = np.empty((0,))
     rmin = np.zeros(ndim)
     
-    # others global: bottom, cellsize, pointers_of_tree,
-    #                levbit, root, incells, intercell_tree,
-    #                rsize, rmin
-
     load_data = np.loadtxt("tree.dat")
     L = (int)(load_data[0,0])
     rsize = L
@@ -67,33 +95,35 @@ def main():
     load_data = load_data[1:]
     print(load_data.shape, load_data[0,0], load_data[0,1])
 
-    pos = np.zeros((2, nbodsmax + ncells))
-    bottom = np.zeros((2, nbodcell))
+    g.pos = np.zeros((2, nbodsmax + g.ncells))
+    g.bottom = np.zeros((2, nbodcell))
     subindex = np.zeros(nbodies)
     bodlist = np.zeros(nbodies)
-    cellsize = np.zeros(nbodcell)
-    iback = np.zeros((2,nbodcell))
-    pm1 = np.zeros((nsubcell,ndim))
+    g.cellsize = np.zeros(nbodcell)
+    g.iback = np.zeros((2,nbodcell))
+    g.pm1 = np.zeros((g.nsubcell,ndim))
 
-    pos[0,:-(ncells + (nbodsmax-nbodies))] = load_data[:,0]
-    pos[1,:-(ncells + (nbodsmax-nbodies))] = load_data[:,1]
+    g.pos[0,:-(g.ncells + (nbodsmax-nbodies))] = load_data[:,0]
+    g.pos[1,:-(g.ncells + (nbodsmax-nbodies))] = load_data[:,1]
     
     print("last particles:")
     print(load_data.shape, load_data[-1,0], load_data[-1,1])
 
     # subquadrant position
-    pm1[0,0] = -1
-    pm1[0,1] = -1
+    g.pm1[0,0] = -1
+    g.pm1[0,1] = -1
     
-    pm1[1,0] = +1
-    pm1[1,1] = -1
+    g.pm1[1,0] = +1
+    g.pm1[1,1] = -1
 
-    pm1[2,0] = -1
-    pm1[2,1] = +1
+    g.pm1[2,0] = -1
+    g.pm1[2,1] = +1
 
-    pm1[3,0] = +1
-    pm1[3,1] = +1
+    g.pm1[3,0] = +1
+    g.pm1[3,1] = +1
 
+    for k in range(0, nbodies):
+        bodlist[k] = k
 
     # MORTON KEYS calculation
     levmorton = 10
@@ -106,11 +136,8 @@ def main():
 
     for i in range(0, load_data.shape[0]):
 
-        # ix = (int) (load_data[i,0] * cj)
-        # iy = (int) (load_data[i,1] * cj)
-
-        ix = (int) (pos[0,i] * cj)
-        iy = (int) (pos[1,i] * cj)
+        ix = (int) (g.pos[0,i] * cj)
+        iy = (int) (g.pos[1,i] * cj)
         tmp = 0
         while levkey < levmorton:
             bitx = bit_test(ix, levkey)
@@ -131,16 +158,16 @@ def main():
 
     # initialization of some other variables
     incells = 1
-    root = nbodies
+    g.root = nbodies
 
     # initialization to 0, meaning there are no cells within the tree
-    pointers_of_tree = np.zeros((nsubcell, ncells))
+    g.pointers_of_tree = np.zeros((g.nsubcell, g.ncells))
 
     for j in range(0, ndim):
-        pos[j, root] = rmin[j] + 0.5*rsize
-        bottom[j, root] = rmin[j]
+        g.pos[j, g.root] = rmin[j] + 0.5*rsize
+        g.bottom[j, g.root] = rmin[j]
 
-    tree_sort(g, nbodies, bodlist, root)
+    tree_sort(g, nbodies, bodlist, g.root)
 
         
 def test_init():

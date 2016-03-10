@@ -182,12 +182,18 @@ void hilbert_init(struct Hilbert* h, int side, int levscan){
 
   for(j = 0; j < 8; j++)
     tr[j] = &tmp[2*j];
+  /* for(j = 0; j < 4; j++) */
+  /*   tr[j] = &tmp[4*j]; */
   
   for(j = 0; j < 4; j++){
     (*h).quad_table[j] = &tr[2*j];
-    for(k = 0; k < 2; k++)
+    for(k = 0; k < 2; k++){
       (*h).quad_table[j][k] = &tmp[4*j + 2*k];
+      printf("\tj = %d; k = %d; int = %p\n", j, k, (void*)(*h).quad_table[j][k]);
+    }
   }
+  printf("\tint = %p\n", (void*)(*h).quad_table[0][1]);
+  printf("\tint = %p\n", (void*)(*h).quad_table[1][0]);
 
   (*h).quad_table[0][0][0] = 0;
   (*h).quad_table[0][1][0] = 3;
